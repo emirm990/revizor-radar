@@ -1,6 +1,5 @@
 const express = require("express");
 const mongodb = require("mongodb");
-const MongoClient = require("mongodb").MongoClient;
 const router = express.Router();
 
 const uri =
