@@ -1,7 +1,7 @@
 <template>
   <main id="app">
     <Header />
-    <HelloWorld msg="Adina konjo <3" />
+    <HelloWorld msg="Revizor Radar" />
     <Search />
     <StopsContainer />
   </main>
