@@ -10,15 +10,13 @@ router.get("/", async (req, res) => {
   res.send(
     await news
       .find({})
+      .sort({ dateUpdated: -1 })
       .limit(5)
-      .sort({ dateUpdated: 1 })
       .toArray()
   );
-  console.log(news);
 });
 router.post("/", async (req, res) => {
   const news = await updateNews();
-  console.log(req.body);
   await news.insertOne({
     dateUpdated: req.body.dateUpdated,
     id: req.body.id,
