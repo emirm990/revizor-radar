@@ -1,33 +1,13 @@
 <template>
   <div class="stops-container">
+    <Search @searchUpdate="handleSearchUpdate" />
     <div class="change-direction" @click="changeDirection">
       <p>Smijer:</p>
       <p v-if="ilidza">Ilidža - Baščaršija</p>
       <p v-else>Baščaršija - Ilidža</p>
     </div>
-    <div v-if="news" class="news-container">
-      <ul v-for="item in news" v-bind:key="item.date">
-        <li>
-          <p>
-            <span>
-              {{
-              new Date(item.dateUpdated).toLocaleString("en-GB", {
-              dateStyle: "medium",
-              timeStyle: "medium",
-              hour12: false
-              })
-              }}
-            </span>
-            - Stanica: {{ item.name }}
-            {{ item.revizori ? " ima" : " nema" }} revizora. {{ item.date }}
-          </p>
-        </li>
-      </ul>
-    </div>
-    <ul
-      v-for="stop in ilidza ? stopsData.stopsIlidza : stopsData.stopsBascarsija"
-      v-bind:key="stop.id"
-    >
+    <News v-bind:news="news" />
+    <ul v-for="stop in filteredList" v-bind:key="stop.id">
       <Stop @newsUpdate="handleNews" :stopInfo="stop" />
     </ul>
   </div>
@@ -37,24 +17,39 @@
 import Stop from "./Stop";
 import StopsService from "../StopsService";
 import NewsService from "../NewsService";
+import News from "./News";
+import Search from "./Search.vue";
 
 export default {
   name: "StopsContainer",
   components: {
-    Stop
+    Stop,
+    News,
+    Search
   },
   async created() {
     try {
-      this.news = await NewsService.getNews();
-      if (this.ilidza) {
-        this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
-      } else {
-        this.stopsData.stopsBascarsija = await StopsService.getStops(
-          "bascarsija"
-        );
-      }
+      let newsArray = await NewsService.getNews();
+      this.news = newsArray.reverse();
+      this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
+      this.stopsData.stopsBascarsija = await StopsService.getStops(
+        "bascarsija"
+      );
     } catch (err) {
       this.error = err.message;
+    }
+  },
+  computed: {
+    filteredList() {
+      if (this.ilidza) {
+        return this.stopsData.stopsIlidza.filter(stop => {
+          return stop.name.toLowerCase().includes(this.search.toLowerCase());
+        });
+      } else {
+        return this.stopsData.stopsBascarsija.filter(stop => {
+          return stop.name.toLowerCase().includes(this.search.toLowerCase());
+        });
+      }
     }
   },
   data() {
@@ -64,10 +59,14 @@ export default {
         stopsIlidza: [],
         stopsBascarsija: []
       },
-      news: []
+      news: [],
+      search: ""
     };
   },
   methods: {
+    handleSearchUpdate(searchFilter) {
+      this.search = searchFilter;
+    },
     async updateNews(news) {
       await NewsService.postNews(
         news.dateUpdated,
@@ -92,15 +91,16 @@ export default {
       }
     },
     async handleNews(value) {
-      this.news = await NewsService.getNews();
-      if (this.news.length > 4) {
+      await this.updateNews(value);
+      let newsArray = await NewsService.getNews();
+      this.news = newsArray.reverse();
+      /*if (this.news.length > 4) {
         this.news.shift();
       }
       this.news.push(value);
-      this.updateNews(value);
+      this.updateNews(value);*/
       if (this.ilidza) {
         //eslint-disable-next-line no-console
-        console.log(value);
         await StopsService.updateStop(
           "ilidza",
           value.id,
@@ -145,12 +145,12 @@ export default {
     flex-basis: 49%;
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.75);
   }
+  #search {
+    margin: 0 auto;
+  }
 }
 .change-direction {
   cursor: pointer;
-  flex-basis: 100%;
-}
-.news-container {
   flex-basis: 100%;
 }
 </style>
