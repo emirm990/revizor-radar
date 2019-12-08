@@ -1,10 +1,21 @@
 <template>
-  <input type="text" name="search" id="search" />
+  <input
+    type="text"
+    name="search"
+    id="search"
+    v-model="searchFilter"
+    @input="$emit('searchUpdate', searchFilter)"
+  />
 </template>
 
 <script>
 export default {
-  name: "Search"
+  name: "Search",
+  data() {
+    return {
+      searchFilter: ""
+    };
+  }
 };
 </script>
 
