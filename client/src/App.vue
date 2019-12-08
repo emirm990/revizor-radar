@@ -2,7 +2,6 @@
   <main id="app">
     <Header />
     <HelloWorld msg="Revizor Radar" />
-    <Search />
     <StopsContainer />
   </main>
 </template>
@@ -10,7 +9,6 @@
 <script>
 import HelloWorld from "./components/HelloWorld.vue";
 import Header from "./components/Header.vue";
-import Search from "./components/Search.vue";
 import StopsContainer from "./components/StopsContainer.vue";
 
 export default {
@@ -18,7 +16,6 @@ export default {
   components: {
     HelloWorld,
     Header,
-    Search,
     StopsContainer
   }
 };
@@ -31,6 +28,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  max-width: 768px;
+  margin: 0 auto;
   margin-top: 60px;
 }
 </style>
