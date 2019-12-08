@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Sever for Revizor-Radar app",
+  "description": "Server for Revizor-Radar app",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
