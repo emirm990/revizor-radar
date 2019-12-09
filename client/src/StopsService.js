@@ -16,7 +16,6 @@ class StopsService {
         }
         const res = await axios.get(url);
         const data = res.data;
-
         resolve(
           data.map(blog => ({
             ...blog,
