@@ -14,14 +14,6 @@
           @change="$emit('newsUpdate', info = new News(new Date(), stopInfo.name, stopInfo.id, stopInfo.revizori))"
         />
       </div>
-      <!--<div class="form-group">
-        <label for="controlersThere">Revizori u tramvaju?</label>
-        <input
-          type="checkbox"
-          name="controlersInVehicle"
-          id="controlersInVehicle"
-        />
-      </div>-->
     </form>
   </div>
 </template>
