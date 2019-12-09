@@ -1,5 +1,6 @@
 <template>
   <div class="stops-container">
+    <div class="loader" v-bind:class="{loaderActive: loading}"></div>
     <Search @searchUpdate="handleSearchUpdate" />
     <div class="change-direction" @click="changeDirection">
       <p>Smijer:</p>
@@ -29,12 +30,14 @@ export default {
   },
   async created() {
     try {
+      this.loading = true;
       let newsArray = await NewsService.getNews();
       this.news = newsArray.reverse();
       this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
       this.stopsData.stopsBascarsija = await StopsService.getStops(
         "bascarsija"
       );
+      this.loading = false;
     } catch (err) {
       this.error = err.message;
     }
@@ -60,24 +63,32 @@ export default {
         stopsBascarsija: []
       },
       news: [],
-      search: ""
+      search: "",
+      loading: false
     };
+  },
+  props: {
+    updatedBy: String
   },
   methods: {
     handleSearchUpdate(searchFilter) {
       this.search = searchFilter;
     },
     async updateNews(news) {
+      this.loading = true;
       await NewsService.postNews(
         news.dateUpdated,
         news.id,
         news.name,
-        news.revizori
+        news.revizori,
+        this.updatedBy
         //this.news[news.length - 1].direction
       );
+      this.loading = false;
     },
     async changeDirection() {
       this.ilidza = !this.ilidza;
+      this.loading = true;
       try {
         if (this.ilidza) {
           this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
@@ -89,18 +100,14 @@ export default {
       } catch (err) {
         this.error = err.message;
       }
+      this.loading = false;
     },
     async handleNews(value) {
       await this.updateNews(value);
+
       let newsArray = await NewsService.getNews();
       this.news = newsArray.reverse();
-      /*if (this.news.length > 4) {
-        this.news.shift();
-      }
-      this.news.push(value);
-      this.updateNews(value);*/
       if (this.ilidza) {
-        //eslint-disable-next-line no-console
         await StopsService.updateStop(
           "ilidza",
           value.id,
@@ -125,9 +132,6 @@ export default {
           }
         });
       }
-
-      //eslint-disable-next-line no-console
-      //console.log(value);
     }
   }
 };
@@ -135,10 +139,69 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+@keyframes loader {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .stops-container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+
+  .loader {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50vh;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #acffff;
+    animation-duration: 0.5s;
+    animation-name: loader;
+    animation-iteration-count: infinite;
+    &::before {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      right: 100%;
+      top: 25%;
+      border-radius: 50%;
+      content: "";
+      display: inline-block;
+      background-color: blue;
+      animation-duration: 0.5s;
+      animation-name: loader;
+      animation-iteration-count: infinite;
+      animation-delay: 0.1s;
+    }
+    &::after {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      left: 100%;
+      top: 25%;
+      border-radius: 50%;
+      content: "";
+      display: inline-block;
+      background-color: blue;
+      animation-delay: 0.1s;
+      animation-duration: 0.5s;
+      animation-name: loader;
+      animation-iteration-count: infinite;
+    }
+  }
+  .loaderActive {
+    display: block;
+  }
   ul {
     list-style: none;
     padding-left: 0;
