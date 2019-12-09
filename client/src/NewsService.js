@@ -19,13 +19,13 @@ class NewsService {
       }
     });
   }
-  static postNews(dateUpdated, id, name, revizori, direction) {
+  static postNews(dateUpdated, id, name, revizori, updatedBy) {
     return axios.post(url, {
       dateUpdated,
       id,
       name,
       revizori,
-      direction
+      updatedBy
     });
   }
 }
