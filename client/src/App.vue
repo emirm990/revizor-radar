@@ -1,22 +1,34 @@
 <template>
   <main id="app">
-    <Header />
-    <HelloWorld msg="Revizor Radar" />
-    <StopsContainer />
+    <Header @authChange="handleAuthChange" />
+    <Title msg="Revizor Radar" />
+    <StopsContainer v-bind:updatedBy="name" />
   </main>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import Title from "./components/Title.vue";
 import Header from "./components/Header.vue";
 import StopsContainer from "./components/StopsContainer.vue";
 
 export default {
   name: "app",
   components: {
-    HelloWorld,
+    Title,
     Header,
     StopsContainer
+  },
+  data() {
+    return {
+      name: "",
+      auth: false
+    };
+  },
+  methods: {
+    handleAuthChange(value) {
+      this.name = value.name;
+      this.auth = value.auth;
+    }
   }
 };
 </script>
