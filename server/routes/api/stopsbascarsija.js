@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
   res.send(await stops.find({}).toArray());
 });
 router.post("/", async (req, res) => {
-  const stop = await updateStop();
+  const stop = await loadStopsCollection();
   await stop.findOneAndUpdate(
     { id: req.body.id },
     {
@@ -29,11 +29,5 @@ async function loadStopsCollection() {
   });
   return client.db("revizor-radar").collection("stopsBascarsija");
 }
-async function updateStop() {
-  const client = await mongodb.MongoClient.connect(uri, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-  });
-  return client.db("revizor-radar").collection("stopsBascarsija");
-}
+
 module.exports = router;
