@@ -5,15 +5,15 @@
         <p>
           <span>
             {{
-              new Date(item.dateUpdated).toLocaleString("en-GB", {
-                dateStyle: "medium",
-                timeStyle: "medium",
-                hour12: false
-              })
+            new Date(item.dateUpdated).toLocaleString("en-GB", {
+            dateStyle: "medium",
+            timeStyle: "medium",
+            hour12: false
+            })
             }}
           </span>
           - Stanica: {{ item.name }}
-          {{ item.revizori ? " ima" : " nema" }} revizora. {{ item.date }}
+          {{ item.revizori ? " ima" : " nema" }} revizora. - {{ item.updatedBy || "anonymous"}}
         </p>
       </li>
     </ul>
