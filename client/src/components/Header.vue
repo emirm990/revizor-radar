@@ -4,7 +4,7 @@
       <img src="https://picsum.photos/seed/picsum/200/50" />
     </div>
     <div>
-      <Auth />
+      <Auth @authChange="handleAuthChange" />
     </div>
   </div>
 </template>
@@ -15,6 +15,25 @@ export default {
   name: "Header",
   components: {
     Auth
+  },
+  data() {
+    return {
+      name: "",
+      auth: false
+    };
+  },
+  methods: {
+    handleAuthChange(value) {
+      // eslint-disable-next-line no-console
+      console.log(value);
+      this.name = value.name;
+      this.auth = value.auth;
+    }
+  },
+  watch: {
+    name: function() {
+      this.$emit("authChange", { name: this.name, auth: this.auth });
+    }
   }
 };
 </script>
@@ -23,7 +42,6 @@ export default {
 <style lang="scss" scoped>
 .header {
   width: 100%;
-  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
