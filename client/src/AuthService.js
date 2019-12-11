@@ -6,7 +6,6 @@ class AuthService {
         return axios.get("api/auth?email=" + email + "&password=" + password);
     }
     static register(name, email, password) {
-
         return axios.post(url, {
             name,
             email,
