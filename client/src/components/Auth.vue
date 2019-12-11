@@ -8,10 +8,28 @@
       <p>Welcome {{name}}</p>
       <button v-if="auth" @click="logout">Logout</button>
     </div>
-
+    <div>
+      <p>{{message}}</p>
+    </div>
     <form v-if="registerClicked" id="register" v-on:submit.prevent="handleRegister">
-      <input type="text" name="name" id="name" v-model="name" required autocomplete="name" />
-      <input type="email" name="email" id="email" v-model="email" required autocomplete="username" />
+      <input
+        type="text"
+        name="name"
+        id="name"
+        v-model="name"
+        required
+        autocomplete="name"
+        placeholder="Name"
+      />
+      <input
+        type="email"
+        name="email"
+        id="email"
+        v-model="email"
+        required
+        autocomplete="username"
+        placeholder="Email"
+      />
       <input
         type="password"
         name="password"
@@ -19,11 +37,29 @@
         v-model="password"
         required
         autocomplete="new-password"
+        placeholder="Password"
+      />
+      <input
+        type="password"
+        name="password"
+        id="password-repeat"
+        v-model="repeatedPassword"
+        required
+        autocomplete="new-password"
+        placeholder="Repeat your password"
       />
       <input type="submit" />
     </form>
     <form v-if="loginClicked" id="login" v-on:submit.prevent="handleLogin">
-      <input type="email" name="email" id="email" v-model="email" required autocomplete="username" />
+      <input
+        type="email"
+        name="email"
+        id="email"
+        v-model="email"
+        required
+        autocomplete="username"
+        placeholder="Email"
+      />
       <input
         type="password"
         name="password"
@@ -31,6 +67,7 @@
         v-model="password"
         required
         autocomplete="current-password"
+        placeholder="Password"
       />
       <input type="submit" />
     </form>
@@ -51,8 +88,10 @@ export default {
       name: "",
       email: "",
       password: "",
+      repeatedPassword: "",
       auth: false,
-      error: false
+      error: false,
+      message: ""
     };
   },
   watch: {
@@ -62,7 +101,20 @@ export default {
   },
   methods: {
     async handleRegister() {
-      await AuthService.register(this.name, this.email, this.password);
+      if (this.password === this.repeatedPassword) {
+        let response = await AuthService.register(
+          this.name,
+          this.email,
+          this.password
+        );
+        this.message = response.data.message;
+        this.registerActive = false;
+        this.registerClicked = false;
+        this.error = false;
+        setTimeout(() => (this.message = ""), 5000);
+      } else {
+        this.message = "Your passwords don't match!";
+      }
     },
     async handleLogin() {
       let authData = await AuthService.login(this.email, this.password);
@@ -80,12 +132,10 @@ export default {
     loginForm() {
       this.loginClicked = !this.loginClicked;
       this.registerClicked = false;
-      this.registerActive = false;
     },
     registerForm() {
       this.registerClicked = !this.registerClicked;
       this.loginClicked = false;
-      this.loginActive = false;
     },
     logout() {
       this.loginActive = true;
@@ -100,6 +150,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#login,
+#register {
+  display: flex;
+  flex-direction: column;
+}
 h3 {
   margin: 40px 0 0;
 }
