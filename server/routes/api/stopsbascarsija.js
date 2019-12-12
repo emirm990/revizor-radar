@@ -6,12 +6,23 @@ const uri =
   "mongodb+srv://admin:admin@cluster0-b8i1n.gcp.mongodb.net/revizor-radar?retryWrites=true&w=majority";
 
 router.get("/", async (req, res) => {
-  const stops = await loadStopsCollection();
+  const client = await mongodb.MongoClient.connect(uri, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+  });
+  const db = await client.db("revizor-radar");
+  const stops = db.collection("stopsBascarsija");
   res.send(await stops.find({}).toArray());
+  client.close();
 });
 router.post("/", async (req, res) => {
-  const stop = await loadStopsCollection();
-  await stop.findOneAndUpdate(
+  const client = await mongodb.MongoClient.connect(uri, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+  });
+  const db = await client.db("revizor-radar");
+  const stops = db.collection("stopsBascarsija");
+  await stops.findOneAndUpdate(
     { id: req.body.id },
     {
       $set: {
@@ -21,13 +32,14 @@ router.post("/", async (req, res) => {
     }
   );
   res.status(201).send("Updated");
+  client.close();
 });
-async function loadStopsCollection() {
+/*async function loadStopsCollection() {
   const client = await mongodb.MongoClient.connect(uri, {
     useUnifiedTopology: true,
     useNewUrlParser: true
   });
-  return client.db("revizor-radar").collection("stopsBascarsija");
-}
+  return client.db("revizor-radar");
+}*/
 
 module.exports = router;
