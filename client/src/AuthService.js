@@ -5,12 +5,17 @@ class AuthService {
     static login(email, password) {
         return axios.get("api/auth?email=" + email + "&password=" + password);
     }
+
     static register(name, email, password) {
         return axios.post(url, {
             name,
             email,
             password
         });
+    }
+
+    static logout() {
+        return axios.get("api/logout");
     }
 }
 export default AuthService;
