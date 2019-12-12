@@ -31,12 +31,26 @@ export default {
   async created() {
     try {
       this.loading = true;
+      if (this.ilidza) {
+        this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
+      } else {
+        this.stopsData.stopsBascarsija = await StopsService.getStops(
+          "bascarsija"
+        );
+      }
       let newsArray = await NewsService.getNews();
       this.news = newsArray.reverse();
-      this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
-      this.stopsData.stopsBascarsija = await StopsService.getStops(
-        "bascarsija"
-      );
+      setInterval(async () => {
+        let newsArray = await NewsService.getNews();
+        this.news = newsArray.reverse();
+        if (this.ilidza) {
+          this.stopsData.stopsIlidza = await StopsService.getStops("ilidza");
+        } else {
+          this.stopsData.stopsBascarsija = await StopsService.getStops(
+            "bascarsija"
+          );
+        }
+      }, 5000);
       this.loading = false;
     } catch (err) {
       this.error = err.message;
