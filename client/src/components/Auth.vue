@@ -99,6 +99,9 @@ export default {
       this.$emit("authChange", { auth: this.auth, name: this.name });
     }
   },
+  async created() {
+    await this.handleLogin();
+  },
   methods: {
     async handleRegister() {
       if (this.password === this.repeatedPassword) {
@@ -137,7 +140,8 @@ export default {
       this.registerClicked = !this.registerClicked;
       this.loginClicked = false;
     },
-    logout() {
+    async logout() {
+      await AuthService.logout();
       this.loginActive = true;
       this.loginClicked = false;
       this.registerActive = true;
